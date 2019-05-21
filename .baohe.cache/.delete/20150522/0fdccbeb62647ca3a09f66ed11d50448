@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dashufa.main" >
+   <insert id="saveUser" parameterType="com.dashufa.entity.User">
+       insert into user
+       (
+       userid,
+       name,
+       address,
+       email,
+       tel,
+       idcardnum,
+       age,
+       headportrait,
+       sex,
+       brontime,
+       password
+       )
+       values
+       (
+         #{userid,jdbcType=VARCHAR},
+         #{name,jdbcType=VARCHAR},
+         #{address,jdbcType=VARCHAR},
+         #{email,jdbcType=VARCHAR},
+         #{tel,jdbcType=VARCHAR},
+         #{idcardnum,jdbcType=VARCHAR},
+          #{age,jdbcType=INTEGER},
+          #{headportrait,jdbcType=BLOB},
+          #{sex,jdbcType=VARCHAR},
+          #{brontime,jdbcType=DATE},
+          #{password,jdbcType=VARCHAR}
+       
+       )
+       
+   </insert>
+   
+   
+   <select id="getUserById" parameterType="map" resultType="com.dashufa.entity.User">
+       SELECT * FROM USER WHERE userid = #{id}
+   </select>
+   
+   <update id="changePassword" parameterType="map">
+       UPDATE USER SET PASSWORD = #{password,jdbcType=VARCHAR} WHERE USERID = #{id}
+   </update>
+   
+   <insert id="saveProduct" parameterType="com.dashufa.entity.Product">
+       INSERT INTO product (
+       productid,
+  userid,
+   uploaddate,
+    product,
+   description,
+   uploadNum
+       )
+       VALUES
+       (
+          #{productid,jdbcType=VARCHAR},
+        #{userid,jdbcType=VARCHAR},
+         #{uploaddate,jdbcType=TIMESTAMP},
+          #{product,jdbcType=BLOB},
+         #{description,jdbcType=VARCHAR},
+         #{uploadNum,jdbcType=VARCHAR}
+       )
+   </insert>
+   
+   <select id="getRecentPic" parameterType="map" resultType="java.lang.String">
+       SELECT productid FROM PRODUCT WHERE uploadNum = #{num} and userid = #{id}
+   </select>
+   
+   
+   <select id="getPicByProductId" resultType="com.dashufa.entity.Product" parameterType="map">
+       SELECT * FROM PRODUCT WHERE productid = #{id}
+   </select>
+   
+  
+   <update id="saveComment" parameterType="com.dashufa.entity.Product">
+       UPDATE PRODUCT SET productName  = #{productName,jdbcType=VARCHAR},
+       description  = #{description,jdbcType=VARCHAR}
+       where productid = #{productid}
+   </update>
+   
+   <insert id="saveAlbum" parameterType="com.dashufa.entity.Album">
+       INSERT INTO ALBUM (
+          albumid,
+          albumname,
+          description,
+          classify,
+          userid,
+          createDate
+       )
+       VALUES
+       (
+         #{albumid,jdbcType=VARCHAR},
+         #{albumname,jdbcType=VARCHAR},
+         #{description,jdbcType=VARCHAR},
+         #{classify,jdbcType=VARCHAR},
+         #{userid,jdbcType=VARCHAR},
+         #{createDate,jdbcType=DATE}
+       )
+   </insert>
+   
+   <select id="getClassfiy" parameterType="map" resultType="java.lang.String">
+       SELECT DISTINCT(classify) FROM album WHERE userid = #{userid}
+   </select>
+   
+   <select id="getAlbumInfo" parameterType="map" resultType="com.dashufa.entity.Album">
+       SELECT * FROM album WHERE classify = #{classfy} AND userid = #{userid}
+   </select>
+   
+   
+   <select id="getOnePic" parameterType="map" resultType="java.lang.String">
+       SELECT productid FROM product WHERE albumid = #{id} and userid = #{userid}   LIMIT 1
+   </select>
+   
+    <select id="showProduct" parameterType="map" resultType="com.dashufa.entity.Product">
+       SELECT * FROM product WHERE albumid = #{id}
+   </select>
+</mapper>

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dashufa.main" >
+   <insert id="saveUser" parameterType="com.dashufa.entity.User">
+       insert into user
+       (
+       userid,
+       name,
+       address,
+       email,
+       tel,
+       idcardnum,
+       age,
+       headportrait,
+       sex,
+       goodat,
+       brontime,
+       distribe,
+       password
+       )
+       values
+       (
+         #{userid,jdbcType=VARCHAR},
+         #{name,jdbcType=VARCHAR},
+         #{address,jdbcType=VARCHAR},
+         #{email,jdbcType=VARCHAR},
+         #{tel,jdbcType=VARCHAR},
+         #{idcardnum,jdbcType=VARCHAR},
+          #{age,jdbcType=INTEGER},
+          #{headportrait,jdbcType=BLOB},
+          #{sex,jdbcType=VARCHAR},
+           #{goodat,jdbcType=VARCHAR},
+          #{brontime,jdbcType=DATE},
+          #{distribe,jdbcType=VARCHAR},
+          #{password,jdbcType=VARCHAR}
+       )
+       
+   </insert>
+   <update id="updateUser" parameterType="com.dashufa.entity.User">
+       UPDATE user SET
+         name = #{name,jdbcType=VARCHAR},
+         address = #{address,jdbcType=VARCHAR},
+         email = #{email,jdbcType=VARCHAR},
+         tel = #{tel,jdbcType=VARCHAR},
+        idcardnum =  #{idcardnum,jdbcType=VARCHAR},
+         age =  #{age,jdbcType=INTEGER},
+         <if test="headportrait!=null">
+            headportrait =  #{headportrait,jdbcType=BLOB},
+         </if>
+         sex =  #{sex,jdbcType=VARCHAR},
+           goodat = #{goodat,jdbcType=VARCHAR},
+          brontime = #{brontime,jdbcType=DATE},
+          distribe = #{distribe,jdbcType=VARCHAR}
+          WHERE  userid = #{userid,jdbcType=VARCHAR}
+   </update>
+   
+   <select id="getUserById" parameterType="map" resultType="com.dashufa.entity.User">
+       SELECT * FROM USER WHERE userid = #{id}
+   </select>
+   
+   <update id="changePassword" parameterType="map">
+       UPDATE USER SET PASSWORD = #{password,jdbcType=VARCHAR} WHERE USERID = #{id}
+   </update>
+   
+   <insert id="saveProduct" parameterType="com.dashufa.entity.Product">
+       INSERT INTO product (
+       productid,
+  userid,
+   uploaddate,
+    product,
+   description,
+   uploadNum,
+   albumid
+       )
+       VALUES
+       (
+          #{productid,jdbcType=VARCHAR},
+        #{userid,jdbcType=VARCHAR},
+         #{uploaddate,jdbcType=TIMESTAMP},
+          #{product,jdbcType=BLOB},
+         #{description,jdbcType=VARCHAR},
+         #{uploadNum,jdbcType=VARCHAR},
+          #{albumid,jdbcType=VARCHAR}
+       )
+   </insert>
+   
+   <select id="getRecentPic" parameterType="map" resultType="java.lang.String">
+       SELECT productid FROM PRODUCT WHERE uploadNum = #{num} and userid = #{id}
+   </select>
+   
+   
+   <select id="getPicByProductId" resultType="com.dashufa.entity.Product" parameterType="map">
+       SELECT * FROM PRODUCT WHERE productid = #{id}
+   </select>
+   
+  
+   <update id="saveComment" parameterType="com.dashufa.entity.Product">
+       UPDATE PRODUCT SET productName  = #{productName,jdbcType=VARCHAR},
+       description  = #{description,jdbcType=VARCHAR}
+       where productid = #{productid}
+   </update>
+   
+   <insert id="saveAlbum" parameterType="com.dashufa.entity.Album">
+       INSERT INTO ALBUM (
+          albumid,
+          albumname,
+          description,
+          classify,
+          userid,
+          createDate
+       )
+       VALUES
+       (
+         #{albumid,jdbcType=VARCHAR},
+         #{albumname,jdbcType=VARCHAR},
+         #{description,jdbcType=VARCHAR},
+         #{classify,jdbcType=VARCHAR},
+         #{userid,jdbcType=VARCHAR},
+         #{createDate,jdbcType=DATE}
+       )
+   </insert>
+   
+   <select id="getClassfiy" parameterType="map" resultType="java.lang.String">
+       SELECT DISTINCT(classify) FROM album WHERE userid = #{userid}
+   </select>
+   
+   <select id="getAlbumInfo" parameterType="map" resultType="com.dashufa.entity.Album">
+       SELECT * FROM album WHERE classify = #{classfy} AND userid = #{userid}
+   </select>
+   
+   
+   <select id="getOnePic" parameterType="map" resultType="java.lang.String">
+       SELECT productid FROM product WHERE albumid = #{id} and userid = #{userid}   LIMIT 1
+   </select>
+   
+    <select id="showProduct" parameterType="map" resultType="com.dashufa.entity.Product">
+       SELECT * FROM product WHERE albumid = #{id}
+   </select>
+  <!-- ******************************** 还没有写好********************************* -->
+    <!--  <select id="getUerInfoflag" parameterType="map" resultType="com.dashufa.entity.User">
+        SELECT * FROM USER WHERE 1=1
+        <choose>
+            <when test="flag==''"></when>
+            
+        </choose>
+   </select> -->
+    <select id="getPagination" parameterType="map" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM USER WHERE goodat = #{classfiy}
+            <if test="flag == 'recommend'">
+                AND recommend = 1
+            </if>
+            order by name
+            </select>
+            
+    <select id="getmainUerInfo" parameterType="map" resultType="com.dashufa.entity.User">
+        SELECT * FROM USER WHERE goodat = #{classfiy}
+            <if test="flag == 'recommend'">
+                AND recommend = 1 
+            </if>
+            order by name
+            LIMIT  ${from},6 
+    </select>
+    <select id="getPaginationforreproduct" resultType="java.lang.Integer" parameterType="map">
+                SELECT COUNT(*) FROM product WHERE recommend = 1
+    </select>
+    <select id="getrecProductInfo" parameterType="map" resultType="com.dashufa.entity.Product">
+        SELECT * FROM product WHERE recommend = 1  order by productName  LIMIT ${from},6
+    </select>
+    
+    <select id="getProductById" parameterType="map" resultType="com.dashufa.entity.Product">
+        SELECT * FROM product WHERE productid  = #{id}
+    </select>
+    
+    <select id="getReommdUser" parameterType="map" resultType="com.dashufa.entity.User">
+         SELECT * FROM USER WHERE recommend = 1
+    </select>
+    
+    <select id="getUserByProductId" parameterType="map" resultType="com.dashufa.entity.User">
+        SELECT * FROM USER WHERE userid IN (SELECT userid FROM product WHERE productid  = #{id})
+    </select>
+</mapper>
